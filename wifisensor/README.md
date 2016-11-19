@@ -6,7 +6,7 @@ This is the firmware for a basic I2C/WiFi sensor.
 Supported boards:
 
 * [SparkFun ESP8266 Thing - Dev Board](https://www.sparkfun.com/products/13711 "SparkFun ESP8266 Thing - Dev Board")
-* [http://www.nodemcu.com/index_en.html](http://www.nodemcu.com/index_en.html "NodeMCU DevKit") or compatible board.
+* [NodeMCU DevKit](http://www.nodemcu.com/index_en.html "NodeMCU DevKit") or compatible board.
 
 Supported sensors:
 
