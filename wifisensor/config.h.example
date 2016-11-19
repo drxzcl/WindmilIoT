@@ -1,0 +1,14 @@
+//////////////////////
+// WiFi Definitions //
+//////////////////////
+const char WiFiSSID[] = "MY_SSID";
+const char WiFiPSK[] = "MY_PASSWORD";
+
+
+////////////////
+// Phant Keys //
+////////////////
+const char PhantHost[] = "data.sparkfun.com";
+const char PublicKey[] = "PUBKEY_HERE";
+const char PrivateKey[] = "PRIVKEY_HERE";
+
