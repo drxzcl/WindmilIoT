@@ -23,7 +23,8 @@
 /////////////////////
 // Pin Definitions //
 /////////////////////
-const int LED_PIN = 5; // Thing's onboard, green LED
+const int LED_PIN = 5;  // Thing's onboard, green LED
+// const int LED_PIN = D0; // NodeMCU's onboard, blue LED
 
 /////////////////
 // Post Timing //
@@ -60,8 +61,6 @@ void loop()
     }
   }
 
-  //TMP102
-  getTemp102();
   delay(5000); //wait 5 seconds before printing our next set of readings. 
 }
 
