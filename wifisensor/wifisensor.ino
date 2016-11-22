@@ -160,8 +160,8 @@ int postToPhant()
   macID.toUpperCase();
   String postedID = "ThingDev-" + macID;
 
-  // Add the four field/value pairs defined by our stream:
-  //ephant.add("id", postedID);
+  // Add the field/value pairs defined by our stream:
+  phant.add("who", postedID);
   //phant.add("analog", analogRead(ANALOG_PIN));
   //phant.add("digital", digitalRead(DIGITAL_PIN));
   phant.add("temp",getTemp102());
