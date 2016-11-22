@@ -165,7 +165,7 @@ int postToPhant()
   Phant phant(PhantHost, PublicKey, PrivateKey);
 
   // Do a little work to get a unique-ish name. Append the
-  // last two bytes of the MAC (HEX'd) to "Thing-":
+  // last two bytes of the MAC (HEX'd) to the SSID:
   uint8_t mac[WL_MAC_ADDR_LENGTH];
   WiFi.macAddress(mac);
   String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
