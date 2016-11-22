@@ -25,6 +25,7 @@
 /////////////////
 const unsigned long postRate = 6000;
 unsigned long lastPost = 0;
+
                                  
 /////////////////////
 // Pin Definitions //
@@ -128,17 +129,23 @@ the sensor is capable of alerting you if the temperature is above or below a spe
   Wire.endTransmission();
  
  
-  firstbyte      = (Wire.read());
-/*read the TMP102 datasheet - here we read one byte from
- each of the temperature registers on the TMP102*/
-  secondbyte      = (Wire.read());
-/*The first byte contains the most significant bits, and
- the second the less significant */
+    firstbyte      = (Wire.read());
+    /*read the TMP102 datasheet - here we read one byte from
+    each of the temperature registers on the TMP102*/
+    secondbyte      = (Wire.read());
+    /*The first byte contains the most significant bits, and
+    the second the less significant */
     val = ((firstbyte) << 4);  
- /* MSB */
+    /* MSB */
     val |= (secondbyte >> 4);    
-/* LSB is ORed into the second 4 bits of our byte.*/
+    /* LSB is ORed into the second 4 bits of our byte.*/
+
     temp = val*0.0625;
+
+    if (val == 4095) {
+      // We have no sensor, so we read the max value. Make it 0 instead.    
+      temp = 0.0f;
+    }
  
   Serial.print("Converted temp is ");
   Serial.print("\t");
