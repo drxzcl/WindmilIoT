@@ -17,20 +17,26 @@
 /////////////////////
 #include <Wire.h>
 #define TMP102_I2C_ADDRESS 72 /* This is the I2C address for our chip.
-                                 This value is correct if you tie the ADD0 pin to ground. 
+                                 This value is correct if you tie the ADD0 pin to ground.                                  
                                  See the datasheet for some other values. */
-
-/////////////////////
-// Pin Definitions //
-/////////////////////
-const int LED_PIN = 5;  // Thing's onboard, green LED
-// const int LED_PIN = D0; // NodeMCU's onboard, blue LED
 
 /////////////////
 // Post Timing //
 /////////////////
 const unsigned long postRate = 6000;
 unsigned long lastPost = 0;
+                                 
+/////////////////////
+// Pin Definitions //
+/////////////////////
+#if defined THING
+const int LED_PIN = 5;  // Thing's onboard, green LED
+#elif defined NODEMCU
+const int LED_PIN = D0; // NodeMCU's onboard, blue LED
+#else
+#error Missing Board define in config.h!
+#endif
+
 
 void setup() 
 {

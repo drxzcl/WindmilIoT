@@ -1,4 +1,10 @@
 //////////////////////
+// BOARD TYPE       //
+//////////////////////
+//#define THING     // SparkFun ESP8266 Thing - Dev Board 
+//#define NODEMCU   // NodeMCU DevKit
+
+//////////////////////
 // WiFi Definitions //
 //////////////////////
 const char WiFiSSID[] = "MY_SSID";
