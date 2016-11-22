@@ -109,59 +109,37 @@ void initHardware()
 float getTemp102(){
   byte firstbyte, secondbyte; //these are the bytes we read from the TMP102 temperature registers
   int val; /* an int is capable of storing two bytes, this is where we "chuck" the two bytes together. */
-  float convertedtemp; /* We then need to multiply our two bytes by a scaling factor, mentioned in the datasheet. */
-  float correctedtemp;
-  // The sensor overreads (?)
- 
+  float temp; /* We then need to multiply our two bytes by a scaling factor, mentioned in the datasheet. */ 
  
   /* Reset the register pointer (by default it is ready to read temperatures)
 You can alter it to a writeable register and alter some of the configuration -
 the sensor is capable of alerting you if the temperature is above or below a specified threshold. */
  
   Wire.beginTransmission(TMP102_I2C_ADDRESS); //Say hi to the sensor.
-  //Wire.send(0x00);
   Wire.write(0x00);
   Wire.endTransmission();
   Wire.requestFrom(TMP102_I2C_ADDRESS, 2);
   Wire.endTransmission();
  
  
-  //firstbyte      = (Wire.receive());
   firstbyte      = (Wire.read());
 /*read the TMP102 datasheet - here we read one byte from
  each of the temperature registers on the TMP102*/
-  //secondbyte     = (Wire.receive());
   secondbyte      = (Wire.read());
 /*The first byte contains the most significant bits, and
  the second the less significant */
     val = ((firstbyte) << 4);  
  /* MSB */
     val |= (secondbyte >> 4);    
-/* LSB is ORed into the second 4 bits of our byte.
-Bitwise maths is a bit funky, but there's a good tutorial on the playground*/
-    convertedtemp = val*0.0625;
-    correctedtemp = convertedtemp - 5;
-    /* See the above note on overreading */
+/* LSB is ORed into the second 4 bits of our byte.*/
+    temp = val*0.0625;
  
- 
-  Serial.print("firstbyte is ");
-  Serial.print("\t");
-  Serial.println(firstbyte, BIN);
-  Serial.print("secondbyte is ");
-  Serial.print("\t");
-  Serial.println(secondbyte, BIN);
-  Serial.print("Concatenated byte is ");
-  Serial.print("\t");
-  Serial.println(val, BIN);
   Serial.print("Converted temp is ");
   Serial.print("\t");
-  Serial.println(val*0.0625);
-  Serial.print("Corrected temp is ");
-  Serial.print("\t");
-  Serial.println(correctedtemp);
+  Serial.println(temp);
   Serial.println();
 
-  return correctedtemp;
+  return temp;
 }
 
 int postToPhant()
