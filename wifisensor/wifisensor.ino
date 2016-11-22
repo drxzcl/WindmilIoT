@@ -158,14 +158,11 @@ int postToPhant()
   String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
                  String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   macID.toUpperCase();
-  String postedID = "ThingDev-" + macID;
+  String postedID =  WiFiSSID + ("-" + macID); // Parentheses force correct operator
 
   // Add the field/value pairs defined by our stream:
   phant.add("who", postedID);
-  //phant.add("analog", analogRead(ANALOG_PIN));
-  //phant.add("digital", digitalRead(DIGITAL_PIN));
   phant.add("temp",getTemp102());
-  //phant.add("time", millis());
 
   // Now connect to data.sparkfun.com, and post our data:
   WiFiClient client;
