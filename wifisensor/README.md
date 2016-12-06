@@ -11,5 +11,6 @@ Supported boards:
 Supported sensors:
 
 * TMP102 I2C temperature sensor
+* MPU9250 or MPU9255 integrated temperature sensor
 
 Support for additional sensors is in development.

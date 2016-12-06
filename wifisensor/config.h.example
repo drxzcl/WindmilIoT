@@ -4,6 +4,14 @@
 //#define THING     // SparkFun ESP8266 Thing - Dev Board 
 //#define NODEMCU   // NodeMCU DevKit
 
+
+//////////////////////
+// TEMP SENSOR      //
+//////////////////////
+//#define TEMP_TMP102 
+//#define TEMP_MPU925x 
+
+
 //////////////////////
 // WiFi Definitions //
 //////////////////////

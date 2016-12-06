@@ -4,6 +4,8 @@
 // Include the SparkFun Phant library.
 #include <Phant.h>
 
+#include "MPU9250.h"
+#include <Wire.h>
 
 /*
  *  Passwords and keys are stored in config.h. You need to make your own.
@@ -11,14 +13,19 @@
  */
 #include "config.h"
 
+/////////////////////
+// Temp sensor configuration
+/////////////////////
+#define TMP102_I2C_ADDRESS 72 
 
-/////////////////////
-// TMP102 Config   //
-/////////////////////
-#include <Wire.h>
-#define TMP102_I2C_ADDRESS 72 /* This is the I2C address for our chip.
-                                 This value is correct if you tie the ADD0 pin to ground.                                  
-                                 See the datasheet for some other values. */
+#if defined TEMP_TMP102
+#define getTemp getTemp102
+#elif defined TEMP_MPU925x
+#define getTemp getTempMPU925x 
+#else 
+#error Missing TEMP_ define in config.h!
+#endif
+
 
 /////////////////
 // Post Timing //
@@ -112,6 +119,26 @@ void initHardware()
   digitalWrite(LED_PIN, HIGH);  // LED off
 }
 
+
+float getTempMPU925x() {
+  MPU9250 myIMU;
+  Wire.begin();
+  byte c = myIMU.readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);
+  //Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX);
+        myIMU.tempCount = myIMU.readTempData();  // Read the adc values
+        // Temperature in degrees Centigrade
+        myIMU.temperature = ((float) myIMU.tempCount) / 333.87 + 21.0;
+        // Print temperature in degrees Centigrade
+        Serial.print("Temperature is ");  Serial.print(myIMU.temperature, 1);
+        Serial.println(" degrees C");
+  
+  
+  return myIMU.temperature;
+  
+}
+
+
+
 //TMP102
 float getTemp102(){
   byte firstbyte, secondbyte; //these are the bytes we read from the TMP102 temperature registers
@@ -175,7 +202,7 @@ int postToPhant()
 
   // Add the field/value pairs defined by our stream:
   phant.add("who", postedID);
-  phant.add("temp",getTemp102());
+  phant.add("temp",getTemp());
 
   // Now connect to data.sparkfun.com, and post our data:
   WiFiClient client;
