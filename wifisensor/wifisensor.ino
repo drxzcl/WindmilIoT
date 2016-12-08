@@ -4,7 +4,8 @@
 // Include the SparkFun Phant library.
 #include <Phant.h>
 
-#include "MPU9250.h"
+// Sparkfun MPU9250 library
+#include <MPU9250.h> 
 #include <Wire.h>
 
 /*
