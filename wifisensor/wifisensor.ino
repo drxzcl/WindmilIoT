@@ -8,24 +8,16 @@
 #include <MPU9250.h> 
 #include <Wire.h>
 
+#include "i2csensor.h"
+#include "mpu925x.h"
+#include "tmp102.h"
+
 /*
  *  Passwords and keys are stored in config.h. You need to make your own.
  *  Copy config.h.example to config.h and edit to taste.
  */
 #include "config.h"
 
-/////////////////////
-// Temp sensor configuration
-/////////////////////
-#define TMP102_I2C_ADDRESS 72 
-
-#if defined TEMP_TMP102
-#define getTemp getTemp102
-#elif defined TEMP_MPU925x
-#define getTemp getTempMPU925x 
-#else 
-#error Missing TEMP_ define in config.h!
-#endif
 
 
 /////////////////
@@ -53,8 +45,12 @@ void setup()
   connectWiFi(); // Connect to WiFi
   digitalWrite(LED_PIN, LOW); // LED on to indicate connect success
   
-  //TMP102
   Wire.begin(); // start the I2C library
+
+  // Initialize the sensors
+  for (int i=0;i<numSensors;i++) {
+    sensors[i]->begin();
+  }  
 }
 
 void loop() 
@@ -121,76 +117,12 @@ void initHardware()
 }
 
 
-float getTempMPU925x() {
-  MPU9250 myIMU;
-  Wire.begin();
-  byte c = myIMU.readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);
-  //Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX);
-        myIMU.tempCount = myIMU.readTempData();  // Read the adc values
-        // Temperature in degrees Centigrade
-        myIMU.temperature = ((float) myIMU.tempCount) / 333.87 + 21.0;
-        // Print temperature in degrees Centigrade
-        Serial.print("Temperature is ");  Serial.print(myIMU.temperature, 1);
-        Serial.println(" degrees C");
-  
-  
-  return myIMU.temperature;
-  
-}
-
-
-
-//TMP102
-float getTemp102(){
-  byte firstbyte, secondbyte; //these are the bytes we read from the TMP102 temperature registers
-  int val; /* an int is capable of storing two bytes, this is where we "chuck" the two bytes together. */
-  float temp; /* We then need to multiply our two bytes by a scaling factor, mentioned in the datasheet. */ 
- 
-  /* Reset the register pointer (by default it is ready to read temperatures)
-You can alter it to a writeable register and alter some of the configuration -
-the sensor is capable of alerting you if the temperature is above or below a specified threshold. */
- 
-  Wire.beginTransmission(TMP102_I2C_ADDRESS); //Say hi to the sensor.
-  Wire.write(0x00);
-  Wire.endTransmission();
-  Wire.requestFrom(TMP102_I2C_ADDRESS, 2);
-  Wire.endTransmission();
- 
- 
-    firstbyte      = (Wire.read());
-    /*read the TMP102 datasheet - here we read one byte from
-    each of the temperature registers on the TMP102*/
-    secondbyte      = (Wire.read());
-    /*The first byte contains the most significant bits, and
-    the second the less significant */
-    val = ((firstbyte) << 4);  
-    /* MSB */
-    val |= (secondbyte >> 4);    
-    /* LSB is ORed into the second 4 bits of our byte.*/
-
-    temp = val*0.0625;
-
-    if (val == 4095) {
-      // We have no sensor, so we read the max value. Make it 0 instead.    
-      temp = 0.0f;
-    }
- 
-  Serial.print("Converted temp is ");
-  Serial.print("\t");
-  Serial.println(temp);
-  Serial.println();
-
-  return temp;
-}
-
 int postToPhant()
 {
   // LED turns on when we enter, it'll go off when we 
   // successfully post.
   digitalWrite(LED_PIN, LOW);
 
-  // Declare an object from the Phant library - phant
-  Phant phant(PhantHost, PublicKey, PrivateKey);
 
   // Do a little work to get a unique-ish name. Append the
   // last two bytes of the MAC (HEX'd) to the SSID:
@@ -200,30 +132,37 @@ int postToPhant()
                  String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   macID.toUpperCase();
   String postedID =  WiFiSSID + ("-" + macID); // Parentheses force correct operator
+  
+  for (int i=0;i<numStreams;i++) {
+    Phant phant = streams[i].phant;
+    // Add the field/value pairs defined by our stream:
+    phant.add("who", postedID);
 
-  // Add the field/value pairs defined by our stream:
-  phant.add("who", postedID);
-  phant.add("temp",getTemp());
+    for (int j=0;j<streams[i].numReadings;j++) {
+      SensorReading r = streams[i].readings[j];
+      phant.add(r.name,r.sensor->readValue(r.kind));    
+    }
 
-  // Now connect to data.sparkfun.com, and post our data:
-  WiFiClient client;
-  const int httpPort = 80;
-  if (!client.connect(PhantHost, httpPort)) 
-  {
-    // If we fail to connect, return 0.
-    return 0;
+    // Now connect to data.sparkfun.com, and post our data:
+    WiFiClient client;
+    const int httpPort = 80;
+    if (!client.connect(streams[i].host.c_str(), httpPort)) 
+    {
+      // If we fail to connect, return 0.
+      return 0;
+    }
+    // If we successfully connected, print our Phant post:
+    client.print(phant.post());
+    Serial.println(phant.post());
+
+
+    // Read all the lines of the reply from server and print them to Serial
+    while(client.available()){
+      String line = client.readStringUntil('\r');
+      //Serial.print(line); // Trying to avoid using serial
+    }    
   }
-  // If we successfully connected, print our Phant post:
-  client.print(phant.post());
-  Serial.println(phant.post());
-
-
-  // Read all the lines of the reply from server and print them to Serial
-  while(client.available()){
-    String line = client.readStringUntil('\r');
-    //Serial.print(line); // Trying to avoid using serial
-  }
-
+  
   // Before we exit, turn the LED off.
   digitalWrite(LED_PIN, HIGH);
 
