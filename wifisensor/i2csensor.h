@@ -40,7 +40,8 @@ struct SensorReading {
 
 struct PhantStream {
   const String host;
-  const Phant phant;
+  const String pubKey;
+  const String privKey;
   const int numReadings;
   SensorReading readings[12];   
 };

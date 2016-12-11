@@ -134,7 +134,7 @@ int postToPhant()
   String postedID =  WiFiSSID + ("-" + macID); // Parentheses force correct operator
   
   for (int i=0;i<numStreams;i++) {
-    Phant phant = streams[i].phant;
+    Phant phant(streams[i].host,streams[i].pubKey,streams[i].privKey);
     // Add the field/value pairs defined by our stream:
     phant.add("who", postedID);
 
