@@ -111,7 +111,7 @@ void connectWiFi()
 
 void initHardware()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);     // Set LED as output
   digitalWrite(LED_PIN, HIGH);  // LED off
 }
@@ -151,15 +151,16 @@ int postToPhant()
       // If we fail to connect, return 0.
       return 0;
     }
+    client.setTimeout(100);
+    
     // If we successfully connected, print our Phant post:
     client.print(phant.post());
     Serial.println(phant.post());
 
-
     // Read all the lines of the reply from server and print them to Serial
-    while(client.available()){
+    while(client.connected()){
       String line = client.readStringUntil('\r');
-      //Serial.print(line); // Trying to avoid using serial
+      Serial.print(line); // Trying to avoid using serial
     }    
   }
   
