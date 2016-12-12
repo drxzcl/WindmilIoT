@@ -3,7 +3,7 @@ class MPU925x: public I2CSensor {
     MPU925x(int i2cAddr):I2CSensor(i2cAddr){ 
         if (MPU9250_ADDRESS != i2cAddr)
         {
-          Serial.print("Due to a quick of the library, we'll be using the MPU925x at address ");
+          Serial.print("Due to a quirk of the library, we'll be using the MPU925x at address ");
           Serial.println(MPU9250_ADDRESS);
           this->i2cAddr = MPU9250_ADDRESS;
         }
