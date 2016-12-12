@@ -12,5 +12,6 @@ Supported sensors:
 
 * TMP102 I2C temperature sensor
 * MPU9250 or MPU9255 integrated temperature sensor
+* MPU9250 or MPU9255 9DOF inertial measurement unit (IMU)
+* LSM9DS1 9DOF inertial measurement unit (IMU)
 
-Support for additional sensors is in development.

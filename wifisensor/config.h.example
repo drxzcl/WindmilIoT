@@ -1,15 +1,67 @@
-//////////////////////
-// BOARD TYPE       //
-//////////////////////
-//#define THING     // SparkFun ESP8266 Thing - Dev Board 
-//#define NODEMCU   // NodeMCU DevKit
+////////////////////
+// BOARD TYPE       
+////////////////////
+
+// Uncomment the board type you will be running on.
+
+//#define THING 1
+//#define NODEMCU
 
 
-//////////////////////
-// TEMP SENSOR      //
-//////////////////////
-//#define TEMP_TMP102 
-//#define TEMP_MPU925x 
+////////////////////
+// SENSORS
+////////////////////
+
+// Define the sensors and their I2C addresses
+
+//#define TMP102_I2C_ADDRESS 72 
+//#define LSM9DS1_M 0x1E // Would be 0x1C if SDO_M is LOW
+//#define LSM9DS1_AG  0x6B // Would be 0x6A if SDO_AG is LOW
+
+// MPU925x sensor1(MPU9250_ADDRESS);
+// TMP102 sensor2(TMP102_I2C_ADDRESS);
+// LSM9DS sensor3(LSM9DS1_AG,LSM9DS1_M);
+
+// Now make a list of all sensors. Don't forget to update the number!
+// static const int numSensors = 2;
+// static I2CSensor* sensors[] = {&sensor1, &sensor3};
+
+////////////////////
+// PHANT STREAMS
+////////////////////
+
+// Define the sensor streams and the sensor readings that go into them.
+// 
+// First set numStreams to the number of Phant streams we will be posting to.
+//
+// A stream is composed of the following pieces of information:
+//     * Address of the Phant server
+//     * Public Stream Key
+//     * Private Stream Key
+//     * The number of sensor readings
+//     * An array of sensor readings
+//
+// A sensor reading is composed of:
+//     * The address of the sensor (e.g. &sensor1)
+//     * The "kind" of reading we want (for sensors that support multiple values)
+//     * The name of the field in the Phant stream
+
+// static const int numStreams = 1;
+// static PhantStream streams[] = {
+//   {
+//    "data.sparkfun.com",        // Address of the Phant server
+//    "PHANT_PUBKEY",
+//    "PHANT_PRIVKEY",
+//    2,                          // Two sensor readings
+//    {{&sensor2,                 // Read the temperature into "room_temp"
+//      I2CSENSOR_VALUE_KIND_TEMP,
+//      "room_temp"},
+//     {&sensor1,                 // Read the total accelleration into "total_acc"
+//      I2CSENSOR_VALUE_KIND_ACC_TOTAL,
+//      "room_temp"},
+//    },
+//  }
+// };
 
 
 //////////////////////
@@ -19,10 +71,5 @@ const char WiFiSSID[] = "MY_SSID";
 const char WiFiPSK[] = "MY_PASSWORD";
 
 
-////////////////
-// Phant Keys //
-////////////////
-const char PhantHost[] = "data.sparkfun.com";
-const char PublicKey[] = "PUBKEY_HERE";
-const char PrivateKey[] = "PRIVKEY_HERE";
+
 
