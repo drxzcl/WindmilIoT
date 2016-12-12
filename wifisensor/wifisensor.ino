@@ -8,9 +8,16 @@
 #include <MPU9250.h> 
 #include <Wire.h>
 
+// https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library/archive/master.zip
+#include <LSM9DS1_Types.h>
+#include <SparkFunLSM9DS1.h>
+#include <LSM9DS1_Registers.h>
+
+
 #include "i2csensor.h"
 #include "mpu925x.h"
 #include "tmp102.h"
+#include "lsm9ds1.h"
 
 /*
  *  Passwords and keys are stored in config.h. You need to make your own.
