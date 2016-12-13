@@ -30,7 +30,7 @@
 /////////////////
 // Post Timing //
 /////////////////
-const unsigned long postRate = 6000;
+const unsigned long postRate = 500;
 unsigned long lastPost = 0;
 
                                  
@@ -79,7 +79,7 @@ void loop()
     }
   }
 
-  delay(5000); //wait 5 seconds before printing our next set of readings. 
+  delay(1000); //wait 1 seconds before printing our next set of readings. 
 }
 
 void connectWiFi()

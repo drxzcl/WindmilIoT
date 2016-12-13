@@ -51,7 +51,9 @@ class LSM9DS: public I2CSensor {
         comp = imu.calcAccel(imu.az);
         acc2 += comp*comp;
       
-        return sqrt(acc2);
+//        return sqrt(acc2);
+        return 10*sqrt(acc2); //fits tempgraph better
+
       } else {
         Serial.println("Unsupported 'kind' on LSM9DS1");
         return -1.0;
