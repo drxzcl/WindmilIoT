@@ -18,7 +18,7 @@
 #include "mpu925x.h"
 #include "tmp102.h"
 #include "lsm9ds1.h"
-
+#include "backend.h"
 /*
  *  Passwords and keys are stored in config.h. You need to make your own.
  *  Copy config.h.example to config.h and edit to taste.
@@ -141,19 +141,18 @@ int postToPhant()
   String postedID =  WiFiSSID + ("-" + macID); // Parentheses force correct operator
   
   for (int i=0;i<numStreams;i++) {
-    Phant phant(streams[i].host,streams[i].pubKey,streams[i].privKey);
     // Add the field/value pairs defined by our stream:
-    phant.add("who", postedID);
+    streams[i].backend->begin(postedID);
 
     for (int j=0;j<streams[i].numReadings;j++) {
       SensorReading r = streams[i].readings[j];
-      phant.add(r.name,r.sensor->readValue(r.kind));    
+      streams[i].backend->addValue(r.name, r.sensor->readValue(r.kind));
     }
 
     // Now connect to data.sparkfun.com, and post our data:
     WiFiClient client;
     const int httpPort = 80;
-    if (!client.connect(streams[i].host.c_str(), httpPort)) 
+    if (!client.connect(streams[i].backend->host().c_str(), httpPort)) 
     {
       // If we fail to connect, return 0.
       return 0;
@@ -161,8 +160,9 @@ int postToPhant()
     client.setTimeout(100);
     
     // If we successfully connected, print our Phant post:
-    client.print(phant.post());
-    Serial.println(phant.post());
+    String request = streams[i].backend->generateRequest();
+    Serial.println(request);
+    client.print(request);
 
     // Read all the lines of the reply from server and print them to Serial
     while(client.connected()){

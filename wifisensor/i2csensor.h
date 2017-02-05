@@ -38,12 +38,5 @@ struct SensorReading {
     String name;
 };
 
-struct PhantStream {
-  const String host;
-  const String pubKey;
-  const String privKey;
-  const int numReadings;
-  SensorReading readings[12];   
-};
 
 
