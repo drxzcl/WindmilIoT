@@ -36,7 +36,7 @@ The shopping list
    stand-alone wall charger.
 
 
-![Shopping list](shopping.png)
+![Shopping list](shopping.jpg)
 
 In the image above, you can see the items on the list from left to
 right, the 18650 battery, the battery holder, the boost converter,
