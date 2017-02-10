@@ -63,11 +63,10 @@ void setup()
 void loop() 
 {
   // This conditional will execute every lastPost milliseconds
-  // (assuming the Phant post succeeded).
   if ((lastPost + postRate <= millis()) || lastPost == 0)
   {
-    Serial.println("Posting to Phant!");
-    if (postToPhant())
+    Serial.println("Posting to backend!");
+    if (postToBackend())
     {
       lastPost = millis();
       Serial.println("Post Suceeded!");
@@ -124,7 +123,7 @@ void initHardware()
 }
 
 
-int postToPhant()
+int postToBackend()
 {
   // LED turns on when we enter, it'll go off when we 
   // successfully post.
