@@ -32,6 +32,21 @@ class ZeroSensor: public I2CSensor {
     
 };
 
+class CapSensor: public I2CSensor {
+  public:
+    CapSensor(int i2cAddr):I2CSensor(i2cAddr){ 
+        capsensor.set_CS_AutocaL_Millis(0xFFFFFFFF);
+      }
+    virtual void begin(){}
+    virtual float readValue(int kind) {
+        return capsensor.capacitiveSensorRaw(60);
+    }
+  private:
+  CapacitiveSensor capsensor = CapacitiveSensor(D5,D6);
+  
+    
+};
+
 struct SensorReading {
     I2CSensor* sensor;
     int kind;

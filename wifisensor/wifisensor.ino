@@ -13,19 +13,23 @@
 #include <SparkFunLSM9DS1.h>
 #include <LSM9DS1_Registers.h>
 
+#include <CapacitiveSensor.h>
+
 
 #include "i2csensor.h"
 #include "mpu925x.h"
 #include "tmp102.h"
 #include "lsm9ds1.h"
 #include "backend.h"
+
+
 /*
  *  Passwords and keys are stored in config.h. You need to make your own.
  *  Copy config.h.example to config.h and edit to taste.
  */
 #include "config.h"
 
-
+ADC_MODE(ADC_VCC); // Use the ADC to measure the voltage.
 
 /////////////////
 // Post Timing //
@@ -78,7 +82,7 @@ void loop()
     }
   }
 
-  delay(1000); //wait 1 seconds before printing our next set of readings. 
+  delay(5000); //wait 5 seconds before printing our next set of readings. 
 }
 
 void connectWiFi()
@@ -158,7 +162,7 @@ int postToBackend()
     }
     client.setTimeout(100);
     
-    // If we successfully connected, print our Phant post:
+    // If we successfully connected, print our post:
     String request = streams[i].backend->generateRequest();
     Serial.println(request);
     client.print(request);
@@ -173,5 +177,6 @@ int postToBackend()
   // Before we exit, turn the LED off.
   digitalWrite(LED_PIN, HIGH);
 
+  Serial.print(ESP.getVcc());
   return 1; // Return success
 }
