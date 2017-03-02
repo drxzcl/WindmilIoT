@@ -14,4 +14,5 @@ Supported sensors:
 * MPU9250 or MPU9255 integrated temperature sensor
 * MPU9250 or MPU9255 9DOF inertial measurement unit (IMU)
 * LSM9DS1 9DOF inertial measurement unit (IMU)
+* Capacitive sensor, such as [this capacitive soil moisture sensor](http://zerocharactersleft.blogspot.nl/2011/11/pcb-as-capacitive-soil-moisture-sensor.html).
 
