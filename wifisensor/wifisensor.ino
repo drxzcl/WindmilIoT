@@ -5,7 +5,7 @@
 #include <Phant.h>
 
 // Sparkfun MPU9250 library
-#include <MPU9250.h> 
+#include <MPU9250.h>
 #include <Wire.h>
 
 // https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library/archive/master.zip
@@ -24,9 +24,9 @@
 
 
 /*
- *  Passwords and keys are stored in config.h. You need to make your own.
- *  Copy config.h.example to config.h and edit to taste.
- */
+    Passwords and keys are stored in config.h. You need to make your own.
+    Copy config.h.example to config.h and edit to taste.
+*/
 #include "config.h"
 
 ADC_MODE(ADC_VCC); // Use the ADC to measure the voltage.
@@ -37,7 +37,7 @@ ADC_MODE(ADC_VCC); // Use the ADC to measure the voltage.
 const unsigned long postRate = 500;
 unsigned long lastPost = 0;
 
-                                 
+
 /////////////////////
 // Pin Definitions //
 /////////////////////
@@ -50,21 +50,21 @@ const int LED_PIN = D0; // NodeMCU's onboard, blue LED
 #endif
 
 
-void setup() 
+void setup()
 {
   initHardware(); // Setup input/output I/O pins
   connectWiFi(); // Connect to WiFi
   digitalWrite(LED_PIN, LOW); // LED on to indicate connect success
-  
+
   Wire.begin(); // start the I2C library
 
   // Initialize the sensors
-  for (int i=0;i<numSensors;i++) {
+  for (int i = 0; i < numSensors; i++) {
     sensors[i]->begin();
-  }  
+  }
 }
 
-void loop() 
+void loop()
 {
   // This conditional will execute every lastPost milliseconds
   if ((lastPost + postRate <= millis()) || lastPost == 0)
@@ -82,7 +82,7 @@ void loop()
     }
   }
 
-  delay(5000); //wait 5 seconds before printing our next set of readings. 
+  delay(5000); //wait 5 seconds before printing our next set of readings.
 }
 
 void connectWiFi()
@@ -114,7 +114,7 @@ void connectWiFi()
     // Add delays -- allowing the processor to perform other
     // tasks -- wherever possible.
   }
-  Serial.println("WiFi connected");  
+  Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
@@ -129,7 +129,7 @@ void initHardware()
 
 int postToBackend()
 {
-  // LED turns on when we enter, it'll go off when we 
+  // LED turns on when we enter, it'll go off when we
   // successfully post.
   digitalWrite(LED_PIN, LOW);
 
@@ -142,41 +142,20 @@ int postToBackend()
                  String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   macID.toUpperCase();
   String postedID =  WiFiSSID + ("-" + macID); // Parentheses force correct operator
-  
-  for (int i=0;i<numStreams;i++) {
+
+  for (int i = 0; i < numStreams; i++) {
     // Add the field/value pairs defined by our stream:
     streams[i].backend->begin(postedID);
 
-    for (int j=0;j<streams[i].numReadings;j++) {
+    for (int j = 0; j < streams[i].numReadings; j++) {
       SensorReading r = streams[i].readings[j];
       streams[i].backend->addValue(r.name, r.sensor->readValue(r.kind));
     }
 
-    // Now connect to data.sparkfun.com, and post our data:
-    WiFiClient client;
-    const int httpPort = 80;
-    if (!client.connect(streams[i].backend->host().c_str(), httpPort)) 
-    {
-      // If we fail to connect, return 0.
-      return 0;
-    }
-    client.setTimeout(100);
-    
-    // If we successfully connected, print our post:
-    String request = streams[i].backend->generateRequest();
-    Serial.println(request);
-    client.print(request);
-
-    // Read all the lines of the reply from server and print them to Serial
-    while(client.connected()){
-      String line = client.readStringUntil('\r');
-      Serial.print(line); // Trying to avoid using serial
-    }    
+    streams[i].backend->send(true);    
   }
-  
+
   // Before we exit, turn the LED off.
   digitalWrite(LED_PIN, HIGH);
-
-  Serial.print(ESP.getVcc());
   return 1; // Return success
 }
